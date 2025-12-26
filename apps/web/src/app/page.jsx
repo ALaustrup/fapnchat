@@ -17,6 +17,8 @@ export const meta = () => [
   { property: "og:title", content: SITE_NAME },
   { property: "og:site_name", content: SITE_NAME },
   { property: "og:type", content: "website" },
+  { property: "og:url", content: "https://wya.baby" },
+  { tagName: "link", rel: "canonical", href: "https://wya.baby" },
 ];
 
 export default function HomePage() {
