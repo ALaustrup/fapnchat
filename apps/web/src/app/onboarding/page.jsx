@@ -13,8 +13,56 @@ export default function OnboardingPage() {
     if (typeof window !== "undefined") {
       const pendingDisplayName = localStorage.getItem("pendingDisplayName");
       if (pendingDisplayName) setDisplayName(pendingDisplayName);
+      
+      // Set age layer if birth date was provided during signup
+      const pendingBirthDate = localStorage.getItem("pendingBirthDate");
+      if (pendingBirthDate) {
+        setAgeLayer(pendingBirthDate);
+      }
+      
+      // Use invite code if one was provided during signup
+      const pendingInviteCode = localStorage.getItem("pendingInviteCode");
+      if (pendingInviteCode) {
+        useInviteCode(pendingInviteCode);
+      }
     }
   }, []);
+
+  // Use invite code after signup
+  const useInviteCode = async (code) => {
+    try {
+      const res = await fetch('/api/invites/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code, action: 'use' }),
+      });
+      
+      if (res.ok) {
+        localStorage.removeItem("pendingInviteCode");
+      } else {
+        console.error("Failed to use invite code");
+      }
+    } catch (err) {
+      console.error("Error using invite code:", err);
+    }
+  };
+
+  // Set age layer from birth date
+  const setAgeLayer = async (birthDate) => {
+    try {
+      const res = await fetch("/api/auth/age", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ birth_date: birthDate }),
+      });
+      
+      if (res.ok) {
+        localStorage.removeItem("pendingBirthDate");
+      }
+    } catch (err) {
+      console.error("Failed to set age layer:", err);
+    }
+  };
 
   useEffect(() => {
     if (!userLoading && user) {

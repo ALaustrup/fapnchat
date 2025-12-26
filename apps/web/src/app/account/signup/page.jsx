@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import useAuth from "@/utils/useAuth";
 import { SITE_NAME } from "@/config/site";
+import { validateBirthDateForSignup } from "@/utils/ageSegmentation";
 
 export default function SignUpPage() {
   const [error, setError] = useState(null);
@@ -8,18 +9,101 @@ export default function SignUpPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
+  const [birthDate, setBirthDate] = useState("");
+  const [ageValidation, setAgeValidation] = useState(null);
+  const [inviteCode, setInviteCode] = useState("");
+  const [inviteOnlyMode, setInviteOnlyMode] = useState(false);
+  const [inviteCodeValid, setInviteCodeValid] = useState(null);
 
   const { signUpWithCredentials } = useAuth();
+
+  // Check if invite-only mode is enabled
+  useEffect(() => {
+    // Alpha: Check if invite-only mode is enabled via API
+    fetch('/api/invites/check-mode')
+      .then(res => res.json())
+      .then(data => {
+        if (data.inviteOnly) {
+          setInviteOnlyMode(true);
+        }
+      })
+      .catch(() => {
+        // If endpoint doesn't exist, assume invite-only is disabled
+        setInviteOnlyMode(false);
+      });
+  }, []);
+
+  // Validate invite code as user types
+  const validateInviteCode = async (code) => {
+    if (!code || code.trim() === '') {
+      setInviteCodeValid(null);
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/invites/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code }),
+      });
+      const data = await res.json();
+      setInviteCodeValid(data.valid);
+      if (!data.valid) {
+        setError(data.message || 'Invalid invite code');
+      } else {
+        setError(null);
+      }
+    } catch (err) {
+      console.error('Invite code validation error:', err);
+      setInviteCodeValid(false);
+    }
+  };
+
+  // Validate birth date on change
+  const handleBirthDateChange = (e) => {
+    const date = e.target.value;
+    setBirthDate(date);
+    
+    if (date) {
+      const validation = validateBirthDateForSignup(date);
+      setAgeValidation(validation);
+    } else {
+      setAgeValidation(null);
+    }
+  };
 
   const onSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
-    if (!email || !password) {
+    if (!email || !password || !birthDate) {
       setError("Please fill in all fields");
       setLoading(false);
       return;
+    }
+
+    // Validate invite code if invite-only mode is enabled
+    if (inviteOnlyMode) {
+      if (!inviteCode || inviteCode.trim() === '') {
+        setError("Invite code is required for Alpha access");
+        setLoading(false);
+        return;
+      }
+
+      // Validate invite code one more time before signup
+      const res = await fetch('/api/invites/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: inviteCode }),
+      });
+      const data = await res.json();
+      
+      if (!data.valid) {
+        setError(data.message || 'Invalid invite code');
+        setLoading(false);
+        return;
+      }
     }
 
     if (password.length < 6) {
@@ -28,10 +112,24 @@ export default function SignUpPage() {
       return;
     }
 
+    // Validate age
+    const validation = validateBirthDateForSignup(birthDate);
+    if (!validation.valid) {
+      setError(validation.error);
+      setLoading(false);
+      return;
+    }
+
     try {
-      // Store display name for onboarding
+      // Store display name and birth date for onboarding
       if (displayName) {
         localStorage.setItem("pendingDisplayName", displayName);
+      }
+      localStorage.setItem("pendingBirthDate", birthDate);
+      
+      // Store invite code to use after signup
+      if (inviteOnlyMode && inviteCode) {
+        localStorage.setItem("pendingInviteCode", inviteCode);
       }
 
       await signUpWithCredentials({
@@ -102,6 +200,72 @@ export default function SignUpPage() {
               className="w-full bg-[#1E1E1F] text-white placeholder-[#555555] border border-[#242424] rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#7A5AF8] focus:border-[#7A5AF8] transition-all"
               placeholder="Create a password (min 6 characters)"
             />
+          </div>
+          {inviteOnlyMode && (
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-[#F4F4F5]">
+                Invite Code <span className="text-[#8B8B90] text-xs">(Required for Alpha access)</span>
+              </label>
+              <input
+                required
+                name="inviteCode"
+                type="text"
+                value={inviteCode}
+                onChange={(e) => {
+                  const code = e.target.value.toUpperCase();
+                  setInviteCode(code);
+                  validateInviteCode(code);
+                }}
+                placeholder="Enter your invite code"
+                className={`w-full bg-[#1E1E1F] text-white placeholder-[#555555] border rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 transition-all ${
+                  inviteCodeValid === false
+                    ? 'border-[#FF5656] focus:ring-[#FF5656] focus:border-[#FF5656]'
+                    : inviteCodeValid === true
+                    ? 'border-[#00FF88] focus:ring-[#7A5AF8] focus:border-[#7A5AF8]'
+                    : 'border-[#242424] focus:ring-[#7A5AF8] focus:border-[#7A5AF8]'
+                }`}
+              />
+              {inviteCodeValid === true && (
+                <p className="text-xs text-[#00FF88]">
+                  ✓ Invite code is valid
+                </p>
+              )}
+              {inviteCodeValid === false && inviteCode && (
+                <p className="text-xs text-[#FF5656]">
+                  Invalid or already used invite code
+                </p>
+              )}
+            </div>
+          )}
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-[#F4F4F5]">
+              Birth Date <span className="text-[#8B8B90] text-xs">(Required for age verification)</span>
+            </label>
+            <input
+              required
+              name="birthDate"
+              type="date"
+              value={birthDate}
+              onChange={handleBirthDateChange}
+              max={new Date(new Date().setFullYear(new Date().getFullYear() - 13)).toISOString().split('T')[0]}
+              className={`w-full bg-[#1E1E1F] text-white placeholder-[#555555] border rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 transition-all ${
+                ageValidation && !ageValidation.valid
+                  ? 'border-[#FF5656] focus:ring-[#FF5656] focus:border-[#FF5656]'
+                  : ageValidation && ageValidation.valid
+                  ? 'border-[#00FF88] focus:ring-[#7A5AF8] focus:border-[#7A5AF8]'
+                  : 'border-[#242424] focus:ring-[#7A5AF8] focus:border-[#7A5AF8]'
+              }`}
+            />
+            {ageValidation && (
+              <p className={`text-xs ${
+                ageValidation.valid ? 'text-[#00FF88]' : 'text-[#FF5656]'
+              }`}>
+                {ageValidation.valid 
+                  ? `Age: ${ageValidation.age} (${ageValidation.layer === 'minor' ? '13-17' : ageValidation.layer === 'transitional' ? '18-21' : '22+'})`
+                  : ageValidation.error
+                }
+              </p>
+            )}
           </div>
 
           {error && (
