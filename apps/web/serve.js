@@ -6,7 +6,7 @@ const port = Number(process.env.PORT) || 4000;
 const handler = await serverModule.default;
 
 serve({
-  fetch: handler.fetch,
+  fetch: handler,
   port,
 });
 
