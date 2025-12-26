@@ -2,7 +2,12 @@ import { auth } from "@/auth";
 import sql from "@/app/api/utils/sql";
 import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+function getStripe() {
+  if (!process.env.STRIPE_SECRET_KEY) {
+    throw new Error("STRIPE_SECRET_KEY is not configured");
+  }
+  return new Stripe(process.env.STRIPE_SECRET_KEY);
+}
 
 const BITS_PACKAGES = {
   bits_100: { bits: 100, price: 50, name: "100 Bits" }, // price in cents
@@ -31,6 +36,7 @@ export async function POST(request) {
         return Response.json({ error: "Invalid package" }, { status: 400 });
       }
 
+      const stripe = getStripe();
       const checkoutSession = await stripe.checkout.sessions.create({
         payment_method_types: ['card'],
         line_items: [
@@ -69,6 +75,7 @@ export async function POST(request) {
         return Response.json({ error: "Invalid package" }, { status: 400 });
       }
 
+      const stripe = getStripe();
       const paymentIntent = await stripe.paymentIntents.create({
         amount: pkg.price,
         currency: 'usd',
@@ -88,6 +95,7 @@ export async function POST(request) {
       // Confirm payment and add bits (called after successful payment)
       const { payment_intent_id } = body;
 
+      const stripe = getStripe();
       const paymentIntent = await stripe.paymentIntents.retrieve(payment_intent_id);
       
       if (paymentIntent.status !== 'succeeded') {
