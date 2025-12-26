@@ -10,6 +10,11 @@ import FriendsView from "@/components/FriendsView";
 import ProfileView from "@/components/ProfileView";
 import MediaGallery from "@/components/MediaGallery";
 import VideoChatView from "@/components/VideoChatView";
+import { SITE_NAME } from "@/config/site";
+
+export const meta = () => [
+  { title: SITE_NAME }
+];
 
 export default function HomePage() {
   const [activePage, setActivePage] = useState("home");

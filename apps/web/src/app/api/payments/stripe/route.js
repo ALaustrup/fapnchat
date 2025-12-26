@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import sql from "@/app/api/utils/sql";
 import Stripe from 'stripe';
+import { SITE_NAME } from "@/config/site";
 
 function getStripe() {
   if (!process.env.STRIPE_SECRET_KEY) {
@@ -45,7 +46,7 @@ export async function POST(request) {
               currency: 'usd',
               product_data: {
                 name: pkg.name,
-                description: `Purchase ${pkg.bits} Bits for FapNChat`,
+                description: `Purchase ${pkg.bits} Bits for ${SITE_NAME}`,
               },
               unit_amount: pkg.price,
             },

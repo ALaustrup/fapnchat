@@ -12,6 +12,7 @@ import {
   Image as ImageIcon,
 } from "lucide-react";
 import MusicPlayer from "./MusicPlayer";
+import { SITE_NAME } from "@/config/site";
 
 export default function LeftSidebar({
   isMobileMenuOpen,
@@ -74,7 +75,7 @@ export default function LeftSidebar({
           </div>
           {/* Brand */}
           <span className="text-white font-semibold text-[18px] leading-tight">
-            FapNChat
+            {SITE_NAME}
           </span>
         </div>
 

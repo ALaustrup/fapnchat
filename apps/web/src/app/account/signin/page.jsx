@@ -1,5 +1,6 @@
 import { useState } from "react";
 import useAuth from "@/utils/useAuth";
+import { SITE_NAME } from "@/config/site";
 
 export default function SignInPage() {
   const [error, setError] = useState(null);
@@ -41,7 +42,7 @@ export default function SignInPage() {
         className="w-full max-w-md bg-[#1A1A1E] border border-[#27272A] rounded-2xl p-8"
       >
         <h1 className="mb-2 text-center text-3xl font-semibold text-white font-poppins">
-          Welcome to FapNChat
+          Welcome to {SITE_NAME}
         </h1>
         <p className="mb-8 text-center text-sm text-[#8B8B90]">
           Sign in to continue
