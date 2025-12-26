@@ -1,4 +1,6 @@
-(async () => {
+console.log("SCRIPT STARTED");
+
+setTimeout(async () => {
   try {
     console.log("BEFORE IMPORT");
     const mod = await import("./build/server/index.js");
@@ -27,5 +29,5 @@
     console.error(error.stack);
     process.exit(1);
   }
-})();
+}, 100);
 
