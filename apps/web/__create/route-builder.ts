@@ -131,11 +131,12 @@ async function registerRoutes() {
   }
 }
 
-// Initial route registration
-await registerRoutes();
-
-// Hot reload routes in development
+// Initial route registration - only in development
+// In production, routes are bundled and handled by React Router
 if (import.meta.env.DEV) {
+  await registerRoutes();
+  
+  // Hot reload routes in development
   import.meta.glob('../src/app/api/**/route.js', {
     eager: true,
   });
@@ -146,6 +147,10 @@ if (import.meta.env.DEV) {
       });
     });
   }
+} else {
+  // In production, routes should be statically imported
+  // React Router handles route discovery through the build process
+  console.log('Production mode: Routes handled by React Router build');
 }
 
 export { api, API_BASENAME };

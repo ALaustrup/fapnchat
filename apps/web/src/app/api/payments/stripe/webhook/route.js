@@ -1,19 +1,44 @@
 import sql from "@/app/api/utils/sql";
+import Stripe from 'stripe';
 
 // Stripe webhook handler
 // This endpoint receives events from Stripe when payments are completed
 
-// import Stripe from 'stripe';
-// const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-// const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+// Initialize Stripe lazily to avoid errors if env var is not set during module load
+let stripe = null;
+let webhookSecret = null;
+
+function getStripe() {
+  if (!stripe) {
+    const key = process.env.STRIPE_SECRET_KEY;
+    if (!key) {
+      throw new Error('STRIPE_SECRET_KEY is not configured');
+    }
+    stripe = new Stripe(key);
+  }
+  return stripe;
+}
+
+function getWebhookSecret() {
+  if (webhookSecret === null) {
+    webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || '';
+  }
+  return webhookSecret;
+}
 
 export async function POST(request) {
   try {
+    const stripe = getStripe();
+    const webhookSecret = getWebhookSecret();
+    
     const body = await request.text();
     const sig = request.headers.get("stripe-signature");
 
-    // Uncomment when Stripe is installed:
-    /*
+    if (!webhookSecret) {
+      console.error("STRIPE_WEBHOOK_SECRET is not configured");
+      return Response.json({ error: "Webhook secret not configured" }, { status: 500 });
+    }
+
     let event;
     try {
       event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
@@ -26,16 +51,21 @@ export async function POST(request) {
     switch (event.type) {
       case 'checkout.session.completed': {
         const session = event.data.object;
-        const { user_id, package_id, bits } = session.metadata;
+        const { user_id, package_id, bits } = session.metadata || {};
+
+        if (!user_id || !bits) {
+          console.error("Missing metadata in checkout session:", session.id);
+          return Response.json({ error: "Missing metadata" }, { status: 400 });
+        }
 
         // Check if already processed
         const existing = await sql`
-          SELECT id FROM bits_purchases WHERE payment_id = ${session.payment_intent}
+          SELECT id FROM bits_purchases WHERE payment_id = ${session.payment_intent || session.id}
         `;
         
         if (existing.length > 0) {
-          console.log("Payment already processed:", session.payment_intent);
-          break;
+          console.log("Payment already processed:", session.payment_intent || session.id);
+          return Response.json({ received: true, message: "Already processed" });
         }
 
         // Add bits to user
@@ -48,7 +78,7 @@ export async function POST(request) {
         // Record purchase
         await sql`
           INSERT INTO bits_purchases (user_id, package_id, bits_amount, price_usd, payment_method, payment_id, status)
-          VALUES (${user_id}, ${package_id}, ${parseInt(bits)}, ${session.amount_total / 100}, 'stripe', ${session.payment_intent}, 'completed')
+          VALUES (${user_id}, ${package_id || 'unknown'}, ${parseInt(bits)}, ${session.amount_total / 100}, 'stripe', ${session.payment_intent || session.id}, 'completed')
         `;
 
         console.log("Bits added for user:", user_id, "Amount:", bits);
@@ -71,7 +101,6 @@ export async function POST(request) {
       default:
         console.log(`Unhandled event type: ${event.type}`);
     }
-    */
 
     return Response.json({ received: true });
   } catch (err) {

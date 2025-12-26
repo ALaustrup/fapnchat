@@ -16,6 +16,7 @@ import { restartEnvFileChange } from './plugins/restartEnvFileChange';
 export default defineConfig({
   // Keep them available via import.meta.env.NEXT_PUBLIC_*
   envPrefix: 'NEXT_PUBLIC_',
+  assetsInclude: ['**/*.sql'],
   optimizeDeps: {
     // Explicitly include fast-glob, since it gets dynamically imported and we
     // don't want that to cause a re-bundle.
@@ -78,6 +79,14 @@ export default defineConfig({
     dedupe: ['react', 'react-dom'],
   },
   clearScreen: false,
+  build: {
+    target: 'node20',
+    ssr: true,
+  },
+  esbuild: {
+    target: 'node20',
+    format: 'esm',
+  },
   server: {
     allowedHosts: true,
     host: '0.0.0.0',

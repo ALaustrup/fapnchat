@@ -80,10 +80,20 @@ export default function useMusic() {
   const resolveSoundCloud = async (url) => {
     try {
       const res = await fetch(`/api/music/soundcloud?action=resolve&url=${encodeURIComponent(url)}`);
-      return await res.json();
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
+        console.error("SoundCloud API error:", errorData);
+        return { error: errorData.error || `HTTP ${res.status}` };
+      }
+      const data = await res.json();
+      if (data.error) {
+        console.error("SoundCloud API error:", data.error);
+        return { error: data.error };
+      }
+      return data;
     } catch (err) {
-      console.error(err);
-      return null;
+      console.error("Error resolving SoundCloud URL:", err);
+      return { error: err.message || "Network error" };
     }
   };
 

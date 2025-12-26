@@ -23,12 +23,30 @@ export default function MusicPlayer({ compact = false }) {
 
   const handleSoundCloudLoad = async () => {
     if (!soundcloudUrl.trim()) return;
+    setSoundcloudEmbed(null); // Clear previous embed
     try {
       const res = await fetch(`/api/music/soundcloud?action=resolve&url=${encodeURIComponent(soundcloudUrl)}`);
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
+        console.error("SoundCloud API error:", errorData);
+        alert(`Failed to load SoundCloud link (${res.status}). Please check the URL and try again.`);
+        return;
+      }
       const data = await res.json();
+      if (data.error) {
+        console.error("SoundCloud API error:", data.error);
+        alert(`Failed to load SoundCloud link: ${data.error}`);
+        return;
+      }
+      if (!data.embedUrl) {
+        console.error("SoundCloud API missing embedUrl:", data);
+        alert("Failed to load SoundCloud link. Invalid response from server.");
+        return;
+      }
       setSoundcloudEmbed(data);
     } catch (err) {
-      console.error(err);
+      console.error("Error loading SoundCloud:", err);
+      alert(`Failed to load SoundCloud link: ${err.message || "Network error"}`);
     }
   };
 
@@ -166,7 +184,7 @@ export default function MusicPlayer({ compact = false }) {
             <div className="bg-[#0F0F0F] rounded-lg overflow-hidden">
               <iframe
                 width="100%"
-                height="166"
+                height={soundcloudEmbed.kind === "playlist" || soundcloudEmbed.kind === "album" ? "450" : "166"}
                 scrolling="no"
                 frameBorder="no"
                 allow="autoplay"
@@ -188,8 +206,23 @@ function MusicPlayerModal({ onClose }) {
 
   const handleSoundCloudLoad = async () => {
     if (!soundcloudUrl.trim()) return;
+    setSoundcloudEmbed(null); // Clear previous embed
     const data = await resolveSoundCloud(soundcloudUrl);
-    if (data) setSoundcloudEmbed(data);
+    if (data) {
+      if (data.error) {
+        console.error("SoundCloud API error:", data.error);
+        alert(`Failed to load SoundCloud link: ${data.error}`);
+        return;
+      }
+      if (!data.embedUrl) {
+        console.error("SoundCloud API missing embedUrl:", data);
+        alert("Failed to load SoundCloud link. Invalid response from server.");
+        return;
+      }
+      setSoundcloudEmbed(data);
+    } else {
+      alert("Failed to load SoundCloud link. Please check the URL and try again.");
+    }
   };
 
   return (
@@ -313,7 +346,7 @@ function MusicPlayerModal({ onClose }) {
               <div className="bg-[#0F0F0F] rounded-xl overflow-hidden">
                 <iframe
                   width="100%"
-                  height="166"
+                  height={soundcloudEmbed.kind === "playlist" || soundcloudEmbed.kind === "album" ? "450" : "166"}
                   scrolling="no"
                   frameBorder="no"
                   allow="autoplay"
