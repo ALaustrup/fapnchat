@@ -221,28 +221,29 @@ install_dependencies() {
   
   cd "$WEB_DIR"
   
-  # Check if vite-tsconfig-paths is missing (common issue)
+  # Force clean install to ensure all packages are properly installed
+  # This fixes package-lock.json sync issues
+  log_info "Cleaning node_modules and package-lock.json..."
+  rm -rf node_modules package-lock.json
+  
+  # Install all dependencies fresh
+  log_info "Installing dependencies..."
+  npm install --production=false --legacy-peer-deps
+  
+  # Explicitly install vite-tsconfig-paths if missing (critical for build)
   if [ ! -d "node_modules/vite-tsconfig-paths" ]; then
-    log_warning "vite-tsconfig-paths not found, forcing reinstall..."
-    # Remove package-lock.json to force fresh resolution
-    rm -f package-lock.json
+    log_warning "vite-tsconfig-paths missing, installing explicitly..."
+    npm install --save-dev vite-tsconfig-paths@^5.1.4 --legacy-peer-deps
   fi
   
-  # Install dependencies (will update package-lock.json)
-  npm install --production=false
-  
-  # Verify critical packages are installed
+  # Verify critical packages
   if [ ! -d "node_modules/vite-tsconfig-paths" ]; then
-    log_error "vite-tsconfig-paths still not installed after npm install"
-    log_info "Attempting explicit install..."
-    npm install --save-dev vite-tsconfig-paths@^5.1.4 --force
-    if [ ! -d "node_modules/vite-tsconfig-paths" ]; then
-      log_error "Failed to install vite-tsconfig-paths"
-      exit 1
-    fi
+    log_error "CRITICAL: vite-tsconfig-paths installation failed"
+    log_error "Build will fail without this package"
+    exit 1
   fi
   
-  log_success "Dependencies installed"
+  log_success "Dependencies installed (vite-tsconfig-paths verified)"
 }
 
 # Build application
