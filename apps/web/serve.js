@@ -1,7 +1,3 @@
-import fs from "fs";
-
-fs.appendFileSync("/tmp/fapnchat-boot.log", `boot ${Date.now()}\n`);
-
 import { serve } from "@hono/node-server";
 import serverModule from "./build/server/index.js";
 
@@ -13,6 +9,4 @@ serve({
   fetch: server.fetch,
   port,
 });
-
-fs.appendFileSync("/tmp/fapnchat-boot.log", `listening ${Date.now()}\n`);
 
