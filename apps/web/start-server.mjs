@@ -23,6 +23,51 @@
  */
 
 import { serve } from "@hono/node-server";
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { dirname, join } from "node:path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+/**
+ * Load .env file if it exists
+ */
+function loadEnvFile() {
+  const envPath = join(__dirname, '.env');
+  try {
+    const envContent = readFileSync(envPath, 'utf-8');
+    const lines = envContent.split('\n');
+    for (const line of lines) {
+      const trimmed = line.trim();
+      // Skip comments and empty lines
+      if (!trimmed || trimmed.startsWith('#')) continue;
+      // Parse KEY=VALUE
+      const match = trimmed.match(/^([^=]+)=(.*)$/);
+      if (match) {
+        const key = match[1].trim();
+        let value = match[2].trim();
+        // Remove quotes if present
+        if ((value.startsWith('"') && value.endsWith('"')) || 
+            (value.startsWith("'") && value.endsWith("'"))) {
+          value = value.slice(1, -1);
+        }
+        // Only set if not already set (env vars take precedence)
+        if (!process.env[key]) {
+          process.env[key] = value;
+        }
+      }
+    }
+  } catch (error) {
+    // .env file doesn't exist or can't be read - that's okay, use system env
+    if (error.code !== 'ENOENT') {
+      console.warn('⚠️  Warning: Could not load .env file:', error.message);
+    }
+  }
+}
+
+// Load .env file before validation
+loadEnvFile();
 
 /**
  * Validate required environment variables

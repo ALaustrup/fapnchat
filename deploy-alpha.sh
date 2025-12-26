@@ -111,27 +111,39 @@ validate_env() {
     exit 1
   fi
   
-  # Source .env to check variables
-  set -a
-  source .env
+  # Load .env file safely (handle unset variables)
+  set +e  # Don't exit on errors during source
+  set -a  # Auto-export variables
+  # Source .env, ignoring comments and empty lines
+  while IFS= read -r line || [ -n "$line" ]; do
+    # Skip comments and empty lines
+    [[ "$line" =~ ^[[:space:]]*# ]] && continue
+    [[ -z "${line// }" ]] && continue
+    # Export the variable
+    export "$line" 2>/dev/null || true
+  done < .env
   set +a
+  set -e  # Re-enable exit on error
   
   local errors=()
   
-  # Check required variables
-  if [ -z "$DATABASE_URL" ]; then
+  # Check required variables (use default empty string if unset)
+  local db_url="${DATABASE_URL:-}"
+  if [ -z "$db_url" ]; then
     errors+=("DATABASE_URL is required")
-  elif [[ ! "$DATABASE_URL" =~ ^postgres ]]; then
+  elif [[ ! "$db_url" =~ ^postgres ]]; then
     errors+=("DATABASE_URL must start with postgresql:// or postgres://")
   fi
   
-  if [ -z "$AUTH_SECRET" ]; then
+  local auth_secret="${AUTH_SECRET:-}"
+  if [ -z "$auth_secret" ]; then
     errors+=("AUTH_SECRET is required")
-  elif [ ${#AUTH_SECRET} -lt 32 ]; then
+  elif [ ${#auth_secret} -lt 32 ]; then
     errors+=("AUTH_SECRET must be at least 32 characters")
   fi
   
-  if [ -z "$NEXT_PUBLIC_APP_URL" ]; then
+  local app_url="${NEXT_PUBLIC_APP_URL:-}"
+  if [ -z "$app_url" ]; then
     errors+=("NEXT_PUBLIC_APP_URL is required")
   fi
   
@@ -223,6 +235,22 @@ build_app() {
   log_info "Building application..."
   
   cd "$WEB_DIR"
+  
+  # Ensure env vars are available for build (Vite needs NEXT_PUBLIC_* vars)
+  # Re-export env vars in case they weren't inherited
+  if [ -f .env ]; then
+    set +e
+    set -a
+    while IFS= read -r line || [ -n "$line" ]; do
+      [[ "$line" =~ ^[[:space:]]*# ]] && continue
+      [[ -z "${line// }" ]] && continue
+      export "$line" 2>/dev/null || true
+    done < .env
+    set +a
+    set -e
+  fi
+  
+  # Run build with env vars available
   npm run build
   
   if [ ! -d "build" ]; then
