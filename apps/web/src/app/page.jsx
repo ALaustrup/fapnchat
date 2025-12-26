@@ -13,7 +13,10 @@ import VideoChatView from "@/components/VideoChatView";
 import { SITE_NAME } from "@/config/site";
 
 export const meta = () => [
-  { title: SITE_NAME }
+  { title: SITE_NAME },
+  { property: "og:title", content: SITE_NAME },
+  { property: "og:site_name", content: SITE_NAME },
+  { property: "og:type", content: "website" },
 ];
 
 export default function HomePage() {
