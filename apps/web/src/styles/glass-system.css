@@ -1,0 +1,110 @@
+/**
+ * WYA!? — Glass System CSS Variables
+ * 
+ * Purpose: Theme variables for glassmorphism UI primitives
+ * 
+ * Feel: Ethereal, depth-aware, ambient glow
+ * - Glass surfaces feel like they float above the background
+ * - Glow provides semantic meaning, not decoration
+ * - Depth is perceptual through blur, shadow, and layering
+ * - Motion is ambient and breathing, not jarring
+ */
+
+:root {
+  /* Glass Surface Colors */
+  --glass-bg: rgba(26, 26, 30, 0.4); /* Base glass background */
+  --glass-bg-hover: rgba(30, 30, 31, 0.5); /* Hover state */
+  --glass-bg-active: rgba(36, 36, 36, 0.6); /* Active state */
+  
+  /* Glass Border */
+  --glass-border: rgba(255, 255, 255, 0.1); /* Subtle border */
+  --glass-border-hover: rgba(255, 255, 255, 0.15); /* Hover border */
+  
+  /* Glass Blur */
+  --glass-blur: 12px; /* Backdrop blur amount */
+  --glass-blur-heavy: 20px; /* Heavy blur for modals */
+  
+  /* Glow Colors (Semantic) */
+  --glow-purple: rgba(122, 90, 248, 0.6); /* Primary accent */
+  --glow-purple-strong: rgba(122, 90, 248, 0.9); /* Active state */
+  --glow-cyan: rgba(0, 217, 255, 0.6); /* Information */
+  --glow-magenta: rgba(255, 0, 217, 0.6); /* Social */
+  --glow-amber: rgba(255, 184, 0, 0.6); /* Warning */
+  --glow-green: rgba(0, 255, 136, 0.6); /* Success */
+  
+  /* Glow Intensity Tiers */
+  --glow-ambient: 0.2; /* Background, subtle */
+  --glow-normal: 0.5; /* Interactive elements */
+  --glow-active: 0.8; /* Focused, active */
+  --glow-alert: 1.0; /* Notifications, warnings */
+  
+  /* Shadow Depths */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.4);
+  --shadow-glow: 0 0 24px var(--glow-purple);
+  
+  /* Presence Colors */
+  --presence-online: #00FF88; /* Green */
+  --presence-away: #FFB800; /* Amber */
+  --presence-offline: #8B8B90; /* Gray */
+  --presence-busy: #FF0066; /* Red */
+  
+  /* Animation Durations (GPU-safe) */
+  --transition-fast: 150ms;
+  --transition-normal: 250ms;
+  --transition-slow: 400ms;
+  --transition-ambient: 3000ms; /* Slow, breathing animations */
+  
+  /* Easing Functions */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-breathe: cubic-bezier(0.4, 0, 0.6, 1); /* Breathing pulse */
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --transition-fast: 0ms;
+    --transition-normal: 0ms;
+    --transition-slow: 0ms;
+    --transition-ambient: 0ms;
+  }
+}
+
+/* Animations */
+@keyframes presence-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+@keyframes modal-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Reduced Motion: Disable animations */
+@media (prefers-reduced-motion: reduce) {
+  @keyframes presence-pulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes modal-fade-in {
+    from {
+      opacity: 1;
+    }
+  }
+}
+

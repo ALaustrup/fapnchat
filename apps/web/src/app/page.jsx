@@ -3,6 +3,7 @@ import useUser from "@/utils/useUser";
 import LeftSidebar from "@/components/LeftSidebar";
 import TopHeader from "@/components/TopHeader";
 import HomeFeed from "@/components/HomeFeed";
+import DiscoveryView from "@/components/DiscoveryView";
 import MessagesView from "@/components/MessagesView";
 import ForumsView from "@/components/ForumsView";
 import ChatRoomsView from "@/components/ChatRoomsView";
@@ -29,6 +30,8 @@ export default function HomePage() {
     switch (activePage) {
       case "home":
         return <HomeFeed />;
+      case "discovery":
+        return <DiscoveryView />;
       case "messages":
         return <MessagesView />;
       case "forums":

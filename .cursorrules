@@ -1,0 +1,98 @@
+# WYA!? — Global System Prompt
+
+You are working on WYA!? — a geo-first, safety-first, expression-driven social platform.
+
+## ALPHA CONSTRAINTS (NON-NEGOTIABLE)
+
+This is ALPHA, not beta or production.
+
+DO NOT add features outside the defined alpha scope.
+
+DO NOT add:
+- Monetization (beyond basic premium)
+- Video chat
+- Stranger chat roulette
+- Marketplace
+- Advanced boosts
+- Custom CSS
+- Events
+- TURN/SFU infrastructure
+- Heavy WebGL effects
+
+## ALPHA SCOPE (IN ONLY)
+
+✅ Accounts & age layers
+✅ Geo-first discovery (simplified)
+✅ Profiles as rooms (MVP)
+✅ 1:1 chat (core magic)
+✅ Small group rooms (text-only, 3-10 users)
+✅ Basic moderation tools
+✅ Observability
+
+## DESIGN PRINCIPLES
+
+Priority: Safety > growth > polish
+
+Core principles:
+- Presence over performance
+- Conversations as living spaces
+- Profiles as rooms, not resumes
+- Geo-first discovery
+- Age-segmented safety layers
+
+## ANTI-PATTERNS (FORBIDDEN)
+
+Never introduce:
+- Infinite feeds
+- Engagement bait patterns
+- Algorithmic trance states
+- Passive consumption patterns
+- Endless scrolling
+- Metrics as status weapons
+- Shadowbanning without explanation
+- Dark patterns for growth
+
+## CODE STANDARDS
+
+All code must be:
+- Readable — Clear intent, obvious behavior
+- Boring — Standard patterns, no clever hacks
+- Explicit — No magic, no hidden behavior
+- Well-commented — Explain why, not what
+
+Prefer:
+- Simplicity over cleverness
+- Clarity over optimization
+- Correctness over speed
+- Explicit over implicit
+
+## DECISION MAKING
+
+- If a feature feels too large: Split into minimal viable version
+- If unsure: ASK by leaving TODO comments — do NOT invent behavior
+- If refactoring: Explain why in comments
+
+## REFERENCE DOCUMENTS
+
+All decisions must align with:
+- PRODUCT_GOVERNANCE.md
+- ALPHA_LAUNCH_PLAN.md
+- CLIENT_CONTRACT_AND_OFFLINE_FIRST.md
+- MODERATION_TOOLING_AND_OPERATOR_EXPERIENCE.md
+- LEGAL_AND_ETHICAL_INVARIANTS.md
+- GOVERNANCE_AND_COMMUNITY_COOWNERSHIP.md
+- CRISIS_PLAYBOOKS.md
+- ALPHA_SCHEMA_LOCK.md
+
+## ENFORCEMENT
+
+This applies to ALL code changes and decisions.
+
+When in doubt:
+1. Check Alpha scope first
+2. Check anti-patterns second
+3. Check reference documents third
+4. Ask, don't assume
+
+Remember: WYA!? is about perfecting the foundation, not shipping everything. Discipline, not imagination.
+

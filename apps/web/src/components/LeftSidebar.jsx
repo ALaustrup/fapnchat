@@ -10,6 +10,7 @@ import {
   LogOut,
   X,
   Image as ImageIcon,
+  MapPin,
 } from "lucide-react";
 import MusicPlayer from "./MusicPlayer";
 import { SITE_NAME } from "@/config/site";
@@ -22,6 +23,7 @@ export default function LeftSidebar({
 }) {
   const mainMenuItems = [
     { icon: Home, label: "Home", key: "home" },
+    { icon: MapPin, label: "Discover", key: "discovery" },
     { icon: MessageCircle, label: "Messages", key: "messages" },
     { icon: Layers, label: "Forums", key: "forums" },
     { icon: MessageSquare, label: "Chat Rooms", key: "chatrooms" },

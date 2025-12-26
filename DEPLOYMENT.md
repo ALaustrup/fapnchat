@@ -23,7 +23,7 @@ nano .env  # Edit DATABASE_URL with your actual database connection string
 
 Example:
 ```
-DATABASE_URL=postgresql://username:password@hostname:5432/database_name
+DATABASE_URL=psql 'postgresql://neondb_owner:npg_a5R9CDbJedkp@ep-sparkling-cell-aecjn7xp-pooler.c-2.us-east-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require'
 ```
 
 ### 2. Run Database Migrations
