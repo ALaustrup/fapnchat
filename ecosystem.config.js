@@ -4,7 +4,7 @@ module.exports = {
       name: "fapnchat-web",
       cwd: "/var/www/fapnchat/apps/web",
       script: "node",
-      args: "serve.js",
+      args: "serve.mjs",
       env: {
         NODE_ENV: "production",
         PORT: 4000
