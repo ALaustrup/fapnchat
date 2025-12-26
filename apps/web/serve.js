@@ -1,12 +1,16 @@
-import { serve } from "@hono/node-server";
-import serverModule from "./build/server/index.js";
+import * as mod from "./build/server/index.js";
 
-const port = Number(process.env.PORT) || 4000;
+console.log("EXPORT KEYS:", Object.keys(mod));
+console.log("DEFAULT TYPE:", typeof mod.default);
+console.log("DEFAULT VALUE:", mod.default);
 
-const handler = await serverModule.default;
+if (mod.default?.fetch) {
+  console.log("DEFAULT HAS FETCH");
+}
 
-serve({
-  fetch: handler,
-  port,
-});
+if (typeof mod.fetch === "function") {
+  console.log("NAMED FETCH EXPORT");
+}
+
+process.exit(0);
 
