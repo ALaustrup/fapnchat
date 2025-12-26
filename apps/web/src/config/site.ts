@@ -1,2 +1,2 @@
-export const SITE_NAME = "VYB";
+export const SITE_NAME = "WYA!?";
 
