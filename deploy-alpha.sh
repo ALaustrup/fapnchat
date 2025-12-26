@@ -220,7 +220,27 @@ install_dependencies() {
   log_info "Installing dependencies..."
   
   cd "$WEB_DIR"
+  
+  # Check if vite-tsconfig-paths is missing (common issue)
+  if [ ! -d "node_modules/vite-tsconfig-paths" ]; then
+    log_warning "vite-tsconfig-paths not found, forcing reinstall..."
+    # Remove package-lock.json to force fresh resolution
+    rm -f package-lock.json
+  fi
+  
+  # Install dependencies (will update package-lock.json)
   npm install --production=false
+  
+  # Verify critical packages are installed
+  if [ ! -d "node_modules/vite-tsconfig-paths" ]; then
+    log_error "vite-tsconfig-paths still not installed after npm install"
+    log_info "Attempting explicit install..."
+    npm install --save-dev vite-tsconfig-paths@^5.1.4 --force
+    if [ ! -d "node_modules/vite-tsconfig-paths" ]; then
+      log_error "Failed to install vite-tsconfig-paths"
+      exit 1
+    fi
+  fi
   
   log_success "Dependencies installed"
 }
