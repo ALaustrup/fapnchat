@@ -19,5 +19,10 @@ if (typeof mod.fetch === "function") {
   console.log("NAMED FETCH EXPORT");
 }
 
+// Check for 'f' export (seen in build)
+if (typeof mod.f === "function") {
+  console.log("NAMED F EXPORT (fetch)");
+}
+
 process.exit(0);
 
