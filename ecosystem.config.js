@@ -3,8 +3,8 @@ module.exports = {
     {
       name: "fapnchat-web",
       cwd: "/var/www/fapnchat/apps/web",
-      script: "node",
-      args: "serve.mjs",
+      script: "npm",
+      args: "start",
       env: {
         NODE_ENV: "production",
         PORT: 4000
