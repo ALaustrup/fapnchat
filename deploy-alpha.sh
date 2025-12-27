@@ -257,6 +257,9 @@ build_app() {
   
   cd "$WEB_DIR"
   
+  # Prevent server auto-start during build
+  export REACT_ROUTER_SERVE_MODE=true
+  
   # Ensure env vars are available for build (Vite needs NEXT_PUBLIC_* vars)
   # Re-export env vars in case they weren't inherited
   if [ -f .env ]; then
