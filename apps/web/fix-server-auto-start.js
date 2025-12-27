@@ -15,7 +15,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const buildServerPath = join(__dirname, 'build/server/assets');
-const { readdirSync } = require('node:fs');
 
 // Find the index-*.js file dynamically (hash changes with each build)
 let indexPath;
@@ -26,6 +25,7 @@ try {
     throw new Error('Could not find index-*.js file in build/server/assets');
   }
   indexPath = join(buildServerPath, indexFile);
+  console.log(`📦 Found build file: ${indexFile}`);
 } catch (error) {
   console.error('❌ Error finding build file:', error.message);
   process.exit(1);
