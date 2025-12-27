@@ -7,7 +7,7 @@
  * environment variable before starting the server.
  */
 
-import { readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync, readdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -15,7 +15,21 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const buildServerPath = join(__dirname, 'build/server/assets');
-const indexPath = join(buildServerPath, 'index-CGuDarWN.js');
+const { readdirSync } = require('node:fs');
+
+// Find the index-*.js file dynamically (hash changes with each build)
+let indexPath;
+try {
+  const files = readdirSync(buildServerPath);
+  const indexFile = files.find(f => f.startsWith('index-') && f.endsWith('.js'));
+  if (!indexFile) {
+    throw new Error('Could not find index-*.js file in build/server/assets');
+  }
+  indexPath = join(buildServerPath, indexFile);
+} catch (error) {
+  console.error('❌ Error finding build file:', error.message);
+  process.exit(1);
+}
 
 try {
   let content = readFileSync(indexPath, 'utf-8');
