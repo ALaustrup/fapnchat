@@ -202,15 +202,40 @@ try {
   }
   
   console.log(`🚀 Starting server on ${host}:${port}...`);
-  server = serve({
-    fetch: app.fetch,
-    port,
-    hostname: host,
-  }, (info) => {
-    console.log(`✅ Server running on http://${info.address}:${info.port}`);
-    console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
-    console.log(`🔒 Alpha deployment ready`);
-  });
+  
+  // Create server with proper error handling
+  let serverReady = false;
+  try {
+    server = serve({
+      fetch: app.fetch,
+      port,
+      hostname: host,
+    }, (info) => {
+      console.log(`🚀 Server started on port ${info.port}`);
+      console.log(`🌍 http://${info.address}:${info.port}`);
+      console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
+      console.log(`🔒 Alpha deployment ready`);
+      serverReady = true;
+    });
+    
+    // Wait for server to actually be ready (callback fired)
+    // Give it up to 2 seconds to bind
+    for (let i = 0; i < 20 && !serverReady; i++) {
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
+    
+    if (!serverReady) {
+      console.warn('⚠️  Server callback not fired within 2 seconds, but continuing...');
+    }
+  } catch (bindError) {
+    if (bindError.code === 'EADDRINUSE') {
+      console.error(`❌ Port ${port} is already in use`);
+      console.error(`   Please stop any other process using port ${port}`);
+      console.error(`   Or change the PORT environment variable`);
+      process.exit(1);
+    }
+    throw bindError;
+  }
 } catch (error) {
   console.error("❌ Failed to start server:", error);
   console.error("Stack:", error.stack);
