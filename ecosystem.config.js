@@ -31,8 +31,8 @@ module.exports = {
     {
       name: "fapnchat-web",
       cwd: "/var/www/fapnchat/apps/web",
-      script: "./start-server.mjs",
-      interpreter: "node",
+      script: "npm",
+      args: "start",
       
       // Environment
       env: {
@@ -63,7 +63,7 @@ module.exports = {
       
       // Graceful Shutdown
       kill_timeout: 10000, // 10s grace period for cleanup
-      listen_timeout: 10000, // Wait 10s for app to start listening
+      listen_timeout: 15000, // Wait 15s for app to start listening (react-router-serve may need more time)
       shutdown_with_message: true, // Send shutdown message to app
       
       // Monitoring
