@@ -31,8 +31,8 @@ module.exports = {
     {
       name: "fapnchat-web",
       cwd: "/var/www/fapnchat/apps/web",
-      script: "npm",
-      args: "start",
+      script: "./start-server-wrapper.sh",
+      interpreter: "bash",
       
       // Environment - explicitly set PORT for react-router-serve
       env: {
