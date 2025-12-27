@@ -39,6 +39,8 @@ export default defineConfig({
     reactRouterHonoServer({
       serverEntryPoint: './__create/index.ts',
       runtime: 'node',
+      // Prevent auto-starting server when using react-router-serve
+      // react-router-serve will handle server startup
     }),
     babel({
       include: ['src/**/*.{js,jsx,ts,tsx}'], // or RegExp: /src\/.*\.[tj]sx?$/
