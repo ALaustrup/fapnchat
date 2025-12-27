@@ -21,7 +21,7 @@ try {
   let content = readFileSync(indexPath, 'utf-8');
   
   // Replace the production server start check to include REACT_ROUTER_SERVE_MODE check
-  const oldPattern = /if \(PRODUCTION\) \{/;
+  const oldPattern = 'if (PRODUCTION) {';
   const newPattern = 'if (PRODUCTION && !process.env.REACT_ROUTER_SERVE_MODE) {';
   
   if (content.includes(oldPattern)) {
