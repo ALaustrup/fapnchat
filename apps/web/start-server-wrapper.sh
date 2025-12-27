@@ -89,7 +89,11 @@ fi
 # Additional small delay to ensure port is fully released
 sleep 1
 
-# Start react-router-serve
+# Start react-router-serve with explicit PORT
 cd "$(dirname "$0")"
-exec node node_modules/.bin/react-router-serve build/server/index.js
+# Ensure PORT is exported and passed to the process
+export PORT=${PORT}
+export NODE_ENV=${NODE_ENV:-production}
+# Use env to explicitly pass PORT to react-router-serve
+exec env PORT=${PORT} NODE_ENV=${NODE_ENV:-production} node node_modules/.bin/react-router-serve build/server/index.js
 
