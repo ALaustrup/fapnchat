@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Send, Search } from "lucide-react";
 import useUser from "@/utils/useUser";
+import { GlassPanel, GlowButton } from "@/components/glass";
 
 export default function MessagesView() {
   const { data: user } = useUser();
@@ -69,8 +70,8 @@ export default function MessagesView() {
   return (
     <div className="h-full flex bg-gradient-to-br from-[#121218] to-[#1A1B25]">
       {/* Conversations List */}
-      <div className="w-80 bg-[#161616] border-r border-[#27272A] flex flex-col">
-        <div className="p-4 border-b border-[#27272A]">
+      <div className="w-80 flex flex-col bg-gradient-to-br from-[#121218] to-[#1A1B25]">
+        <GlassPanel className="p-4 border-b border-[rgba(255,255,255,0.1)]" variant="default">
           <h2 className="font-poppins font-semibold text-white text-lg mb-3">
             Messages
           </h2>
@@ -85,9 +86,9 @@ export default function MessagesView() {
               className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8B8B90]"
             />
           </div>
-        </div>
+        </GlassPanel>
 
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto p-2">
           {loading ? (
             <div className="p-4 text-center text-[#8B8B90]">Loading...</div>
           ) : conversations.length === 0 ? (
@@ -96,14 +97,11 @@ export default function MessagesView() {
             </div>
           ) : (
             conversations.map((conv) => (
-              <div
+              <GlassPanel
                 key={conv.id}
                 onClick={() => setSelectedConversation(conv)}
-                className={`p-4 cursor-pointer transition-colors ${
-                  selectedConversation?.id === conv.id
-                    ? "bg-[#202021]"
-                    : "hover:bg-[#1E1E1F]"
-                }`}
+                variant={selectedConversation?.id === conv.id ? "active" : "hover"}
+                className="p-4 mb-2 cursor-pointer"
               >
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 bg-gradient-to-r from-[#7A5AF8] to-[#9F7AEA] rounded-full flex items-center justify-center">
@@ -120,7 +118,7 @@ export default function MessagesView() {
                     </p>
                   </div>
                 </div>
-              </div>
+              </GlassPanel>
             ))
           )}
         </div>
@@ -131,7 +129,7 @@ export default function MessagesView() {
         {selectedConversation ? (
           <>
             {/* Chat Header */}
-            <div className="p-4 bg-[#1A1A1E] border-b border-[#27272A]">
+            <GlassPanel className="p-4 border-b border-[rgba(255,255,255,0.1)]" variant="default">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-gradient-to-r from-[#7A5AF8] to-[#9F7AEA] rounded-full flex items-center justify-center">
                   <span className="text-white font-semibold">
@@ -145,7 +143,7 @@ export default function MessagesView() {
                     selectedConversation.email}
                 </h3>
               </div>
-            </div>
+            </GlassPanel>
 
             {/* Messages */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
@@ -154,24 +152,25 @@ export default function MessagesView() {
                   key={msg.id}
                   className={`flex ${msg.sender_id === user?.id ? "justify-end" : "justify-start"}`}
                 >
-                  <div
-                    className={`max-w-md px-4 py-2 rounded-lg ${
+                  <GlassPanel
+                    className={`max-w-md px-4 py-2 ${
                       msg.sender_id === user?.id
-                        ? "bg-gradient-to-r from-[#7A5AF8] to-[#9F7AEA] text-white"
-                        : "bg-[#1E1E1F] text-white"
+                        ? "bg-gradient-to-r from-[#7A5AF8] to-[#9F7AEA] text-white border-0"
+                        : "text-white"
                     }`}
+                    variant="default"
                   >
                     <p className="text-sm font-poppins">{msg.message}</p>
                     <p className="text-xs opacity-70 mt-1">
                       {new Date(msg.created_at).toLocaleTimeString()}
                     </p>
-                  </div>
+                  </GlassPanel>
                 </div>
               ))}
             </div>
 
             {/* Message Input */}
-            <div className="p-4 bg-[#1A1A1E] border-t border-[#27272A]">
+            <GlassPanel className="p-4 border-t border-[rgba(255,255,255,0.1)]" variant="default">
               <div className="flex items-center gap-3">
                 <input
                   type="text"
@@ -179,17 +178,18 @@ export default function MessagesView() {
                   onChange={(e) => setNewMessage(e.target.value)}
                   onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
                   placeholder="Type a message..."
-                  className="flex-1 bg-[#1E1E1F] text-white placeholder-[#555555] border border-[#242424] rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#7A5AF8]"
+                  className="flex-1 bg-[rgba(30,30,31,0.3)] backdrop-blur-sm text-white placeholder-[#8B8B90] border border-[rgba(255,255,255,0.1)] rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#7A5AF8]"
                 />
-                <button
+                <GlowButton
+                  glow="purple"
                   onClick={handleSendMessage}
                   disabled={!newMessage.trim()}
-                  className="bg-gradient-to-r from-[#7A5AF8] to-[#9F7AEA] text-white p-3 rounded-lg hover:from-[#6D4CE5] hover:to-[#8B5CF6] transition-all disabled:opacity-50"
+                  className="p-3"
                 >
                   <Send size={20} />
-                </button>
+                </GlowButton>
               </div>
-            </div>
+            </GlassPanel>
           </>
         ) : (
           <div className="flex-1 flex items-center justify-center">

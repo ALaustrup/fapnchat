@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import useUser from "@/utils/useUser";
 import useUpload from "@/utils/useUpload";
+import { GlassPanel, GlowButton } from "@/components/glass";
 
 export default function HomeFeed() {
   const { data: user } = useUser();
@@ -111,7 +112,7 @@ export default function HomeFeed() {
     <div className="h-full bg-gradient-to-br from-[#121218] to-[#1A1B25] overflow-y-auto">
       <div className="max-w-2xl mx-auto p-4 md:p-6">
         {/* Create Post */}
-        <div className="bg-[#1A1A1E] border border-[#27272A] rounded-xl p-4 mb-6">
+        <GlassPanel className="p-4 mb-6" variant="hover">
           <h2 className="font-poppins font-semibold text-white text-lg mb-4">
             Create Post
           </h2>
@@ -119,7 +120,7 @@ export default function HomeFeed() {
             value={newPostContent}
             onChange={(e) => setNewPostContent(e.target.value)}
             placeholder="What's on your mind?"
-            className="w-full bg-[#1E1E1F] text-white placeholder-[#555555] border border-[#242424] rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#7A5AF8] focus:border-[#7A5AF8] transition-all resize-none mb-3"
+            className="w-full bg-[rgba(30,30,31,0.3)] backdrop-blur-sm text-white placeholder-[#8B8B90] border border-[rgba(255,255,255,0.1)] rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#7A5AF8] focus:border-[#7A5AF8] transition-all resize-none mb-3"
             rows="3"
           />
 
@@ -162,19 +163,20 @@ export default function HomeFeed() {
                 className="hidden"
               />
             </label>
-            <button
+            <GlowButton
+              glow="purple"
               onClick={handleCreatePost}
               disabled={
                 creating ||
                 uploadLoading ||
                 (!newPostContent.trim() && !newPostMedia)
               }
-              className="bg-gradient-to-r from-[#7A5AF8] to-[#9F7AEA] text-white px-6 py-2 rounded-lg font-poppins font-semibold text-sm hover:from-[#6D4CE5] hover:to-[#8B5CF6] active:from-[#5B3FD4] active:to-[#7C3AED] transition-all duration-200 disabled:opacity-50"
+              className="px-6 py-2 font-poppins font-semibold text-sm"
             >
               {creating || uploadLoading ? "Posting..." : "Post"}
-            </button>
+            </GlowButton>
           </div>
-        </div>
+        </GlassPanel>
 
         {/* Posts Feed */}
         {loading ? (
@@ -191,10 +193,7 @@ export default function HomeFeed() {
         ) : (
           <div className="space-y-4">
             {posts.map((post) => (
-              <div
-                key={post.id}
-                className="bg-[#1A1A1E] border border-[#27272A] rounded-xl p-4"
-              >
+              <GlassPanel key={post.id} className="p-4" variant="hover">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="w-10 h-10 bg-gradient-to-r from-[#7A5AF8] to-[#9F7AEA] rounded-full flex items-center justify-center">
                     <span className="text-white font-semibold text-sm">
@@ -250,7 +249,7 @@ export default function HomeFeed() {
                     <span className="text-sm">Share</span>
                   </button>
                 </div>
-              </div>
+              </GlassPanel>
             ))}
           </div>
         )}

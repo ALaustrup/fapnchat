@@ -22,6 +22,7 @@ import useUser from "@/utils/useUser";
 import useUpload from "@/utils/useUpload";
 import useBits from "@/utils/useBits";
 import { NowPlayingStatus } from "./MusicPlayer";
+import { GlassPanel, FloatingCard, GlowButton } from "@/components/glass";
 
 export default function ProfileView() {
   const { data: user } = useUser();
@@ -214,29 +215,34 @@ export default function ProfileView() {
           <div>
             {editing ? (
               <div className="flex gap-2">
-                <button
+                <GlowButton
+                  glow="amber"
+                  variant="ghost"
                   onClick={() => setEditing(false)}
-                  className="px-4 py-2 bg-[#27272A] text-white rounded-lg hover:bg-[#3A3A3D] transition-colors"
+                  className="px-4 py-2"
                 >
                   Cancel
-                </button>
-                <button
+                </GlowButton>
+                <GlowButton
+                  glow="purple"
                   onClick={handleSave}
                   disabled={saving}
-                  className="px-4 py-2 bg-[#7A5AF8] text-white rounded-lg hover:bg-[#6D4CE5] transition-colors flex items-center gap-2 disabled:opacity-50"
+                  className="px-4 py-2 flex items-center gap-2"
                 >
                   <Save size={16} />
                   {saving ? "Saving..." : "Save"}
-                </button>
+                </GlowButton>
               </div>
             ) : (
-              <button
+              <GlowButton
+                glow="cyan"
+                variant="ghost"
                 onClick={() => setEditing(true)}
-                className="px-4 py-2 bg-[#27272A] text-white rounded-lg hover:bg-[#3A3A3D] transition-colors flex items-center gap-2"
+                className="px-4 py-2 flex items-center gap-2"
               >
                 <Edit size={16} />
                 Edit Profile
-              </button>
+              </GlowButton>
             )}
           </div>
         </div>
@@ -249,7 +255,8 @@ export default function ProfileView() {
         )}
 
         {/* Tabs */}
-        <div className="flex gap-1 bg-[#1A1A1E] rounded-lg p-1 mb-6">
+        <GlassPanel className="p-1 mb-6" variant="default">
+          <div className="flex gap-1">
           {[
             { id: "profile", label: "Profile", icon: User },
             { id: "settings", label: "Settings", icon: Settings },
@@ -267,12 +274,13 @@ export default function ProfileView() {
               {tab.label}
             </button>
           ))}
-        </div>
+          </div>
+        </GlassPanel>
 
         {activeTab === "profile" && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Bio & Info */}
-            <div className="bg-[#1A1A1E] border border-[#27272A] rounded-xl p-6">
+            <FloatingCard className="p-6">
               <h3 className="font-semibold text-white mb-4">About</h3>
               
               {editing ? (
@@ -283,7 +291,7 @@ export default function ProfileView() {
                       type="text"
                       value={formData.display_name}
                       onChange={(e) => setFormData({ ...formData, display_name: e.target.value })}
-                      className="w-full bg-[#0F0F0F] text-white border border-[#27272A] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#7A5AF8]"
+                      className="w-full bg-[rgba(15,15,15,0.5)] backdrop-blur-sm text-white border border-[rgba(255,255,255,0.1)] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#7A5AF8]"
                       maxLength={50}
                     />
                   </div>
@@ -292,7 +300,7 @@ export default function ProfileView() {
                     <textarea
                       value={formData.bio}
                       onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-                      className="w-full bg-[#0F0F0F] text-white border border-[#27272A] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#7A5AF8] resize-none"
+                      className="w-full bg-[rgba(15,15,15,0.5)] backdrop-blur-sm text-white border border-[rgba(255,255,255,0.1)] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#7A5AF8] resize-none"
                       rows={4}
                       maxLength={500}
                     />
@@ -303,7 +311,7 @@ export default function ProfileView() {
                       type="text"
                       value={formData.location}
                       onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                      className="w-full bg-[#0F0F0F] text-white border border-[#27272A] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#7A5AF8]"
+                      className="w-full bg-[rgba(15,15,15,0.5)] backdrop-blur-sm text-white border border-[rgba(255,255,255,0.1)] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#7A5AF8]"
                       placeholder="City, Country"
                     />
                   </div>
@@ -313,7 +321,7 @@ export default function ProfileView() {
                       type="url"
                       value={formData.website}
                       onChange={(e) => setFormData({ ...formData, website: e.target.value })}
-                      className="w-full bg-[#0F0F0F] text-white border border-[#27272A] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#7A5AF8]"
+                      className="w-full bg-[rgba(15,15,15,0.5)] backdrop-blur-sm text-white border border-[rgba(255,255,255,0.1)] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#7A5AF8]"
                       placeholder="https://..."
                     />
                   </div>
@@ -346,10 +354,10 @@ export default function ProfileView() {
                   )}
                 </div>
               )}
-            </div>
+            </FloatingCard>
 
             {/* Customization */}
-            <div className="bg-[#1A1A1E] border border-[#27272A] rounded-xl p-6">
+            <FloatingCard className="p-6">
               <h3 className="font-semibold text-white mb-4">Customization</h3>
               
               {editing ? (
@@ -378,7 +386,7 @@ export default function ProfileView() {
                       type="url"
                       value={formData.profile_music_url}
                       onChange={(e) => setFormData({ ...formData, profile_music_url: e.target.value })}
-                      className="w-full bg-[#0F0F0F] text-white border border-[#27272A] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#7A5AF8]"
+                      className="w-full bg-[rgba(15,15,15,0.5)] backdrop-blur-sm text-white border border-[rgba(255,255,255,0.1)] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#7A5AF8]"
                       placeholder="https://open.spotify.com/track/..."
                     />
                   </div>
@@ -458,12 +466,12 @@ export default function ProfileView() {
                   )}
                 </div>
               )}
-            </div>
+            </FloatingCard>
           </div>
         )}
 
         {activeTab === "settings" && (
-          <div className="bg-[#1A1A1E] border border-[#27272A] rounded-xl p-6">
+          <FloatingCard className="p-6">
             <h3 className="font-semibold text-white mb-4">Privacy Settings</h3>
             
             <div className="space-y-4">
@@ -534,7 +542,7 @@ export default function ProfileView() {
                 </button>
               )}
             </div>
-          </div>
+          </FloatingCard>
         )}
       </div>
     </div>
