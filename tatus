@@ -1,0 +1,10 @@
+[33m19807d5[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m chore: update dependencies and add deployment helper scripts
+[33m7fc3287[m fix: correct regex pattern in post-build script
+[33mf1ce0f4[m fix: add post-build script to prevent server auto-start conflict
+[33mf045ef4[m fix: add REACT_ROUTER_SERVE_MODE env var to prevent double server start
+[33m975b00c[m fix: explicitly pass PORT env var to react-router-serve process
+[33m1db8744[m fix: add port cleanup wrapper script for react-router-serve
+[33m3988b2e[m fix: ensure PORT env var is passed to react-router-serve
+[33mb0a4ede[m fix: increase PM2 restart delay to prevent port conflicts
+[33me0c2c9e[m fix: use react-router-serve directly instead of custom start script
+[33m6100656[m fix: wait for server to be ready before continuing
