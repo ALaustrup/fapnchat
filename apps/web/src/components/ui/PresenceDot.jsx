@@ -60,7 +60,6 @@ const PresenceDot = forwardRef(
           }}
           {...props}
         />
-      </>
     );
   }
 );

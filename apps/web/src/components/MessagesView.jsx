@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Send, Search } from "lucide-react";
 import useUser from "@/utils/useUser";
-import { GlassPanel, GlowButton } from "@/components/glass";
+import { GlassPanel, GlowButton } from "@/components/ui";
 
 export default function MessagesView() {
   const { data: user } = useUser();

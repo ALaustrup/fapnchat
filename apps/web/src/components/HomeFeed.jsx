@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import useUser from "@/utils/useUser";
 import useUpload from "@/utils/useUpload";
-import { GlassPanel, GlowButton } from "@/components/glass";
+import { GlassPanel, GlowButton } from "@/components/ui";
 
 export default function HomeFeed() {
   const { data: user } = useUser();

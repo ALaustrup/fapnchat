@@ -22,7 +22,7 @@ import useUser from "@/utils/useUser";
 import useUpload from "@/utils/useUpload";
 import useBits from "@/utils/useBits";
 import { NowPlayingStatus } from "./MusicPlayer";
-import { GlassPanel, FloatingCard, GlowButton } from "@/components/glass";
+import { GlassPanel, FloatingCard, GlowButton } from "@/components/ui";
 
 export default function ProfileView() {
   const { data: user } = useUser();
