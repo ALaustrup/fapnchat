@@ -1,3 +1,6 @@
+/* Glass System Styles - must come before @tailwind */
+@import '../styles/glass-system.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
