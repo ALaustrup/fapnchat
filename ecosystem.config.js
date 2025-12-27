@@ -46,9 +46,9 @@ module.exports = {
       
       // Auto-restart
       autorestart: true,
-      max_restarts: 10,
-      min_uptime: "10s", // Must stay up 10s to be considered stable
-      restart_delay: 4000, // Wait 4s before restart
+      max_restarts: 5, // Reduced to prevent rapid restart loops
+      min_uptime: "30s", // Must stay up 30s to be considered stable
+      restart_delay: 10000, // Wait 10s before restart to ensure port is released
       
       // Resource Limits (Alpha: conservative)
       max_memory_restart: "500M", // Restart if memory exceeds 500MB
