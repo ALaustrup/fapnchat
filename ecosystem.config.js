@@ -34,11 +34,12 @@ module.exports = {
       script: "npm",
       args: "start",
       
-      // Environment
+      // Environment - explicitly set PORT for react-router-serve
       env: {
         NODE_ENV: "production",
-        PORT: 4000
+        PORT: "4000"
       },
+      env_file: ".env", // Also load from .env file
       
       // Process Management
       instances: 1, // Alpha: single instance only
